@@ -3,7 +3,7 @@
 const int led1 = 2; // Pin of the LED
 
 void toggleLED(void * parameter) {
-  for (;;) {
+  while(1) {
     digitalWrite(led1, HIGH);
     Serial.println("Turning on LED");
     vTaskDelay(500 / portTICK_PERIOD_MS);
