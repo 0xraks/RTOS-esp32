@@ -1,5 +1,9 @@
 #include <Arduino.h>
 #include <stdlib.h>
+#include <Preferences.h>
+
+Preferences preferences;
+
 // Use only core 1 for demo purposes
 #if CONFIG_FREERTOS_UNICORE
   static const BaseType_t app_cpu = 0;
@@ -12,9 +16,10 @@ static const uint8_t buf_len = 20;
 
 // Pins
 static const int led_pin = 2;
+static uint32_t led_delay = 500;
 
 // Globals
-static int led_delay = 500;   // ms
+// ms
 
 //*****************************************************************************
 // Tasks
@@ -52,8 +57,13 @@ void readSerial(void *parameters) {
       // Update delay variable and reset buffer if we get a newline character
       if (c == '\n') {
         led_delay = atoi(buf);
-        Serial.print("Updated LED delay to: ");
-        Serial.println(led_delay);
+        Serial.print("Updated LED delay to: ");    
+        Serial.println(led_delay); 
+        vTaskDelay(100 / portTICK_PERIOD_MS);
+        preferences.begin("myapp", false);
+        preferences.putUInt("val",led_delay); 
+        preferences.end();        
+        vTaskDelay(100 / portTICK_PERIOD_MS);
         memset(buf, 0, buf_len);
         idx = 0;
       } else {
@@ -63,6 +73,7 @@ void readSerial(void *parameters) {
           buf[idx] = c;
           idx++;
         }
+       
       }
     }
   }
@@ -75,7 +86,6 @@ void setup() {
 
   // Configure pin
   pinMode(led_pin, OUTPUT);
-
   // Configure serial and wait a second
   Serial.begin(115200);
   vTaskDelay(1000 / portTICK_PERIOD_MS);
@@ -103,8 +113,7 @@ void setup() {
             app_cpu);       // Run on one core for demo purposes (ESP32 only)
 
   // Delete "setup and loop" task
-  vTaskDelete(NULL);
-}
+  }
 
 void loop() {
   // Execution should never get here
