@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include <stdlib.h>
-#include <Preferences.h>
+// #include <Preferences.h>
 
-Preferences preferences;
+// Preferences preferences;
 
 // Use only core 1 for demo purposes
 #if CONFIG_FREERTOS_UNICORE
@@ -15,7 +15,7 @@ Preferences preferences;
 static const uint8_t buf_len = 20;
 
 // Pins
-static const int led_pin = 2;
+static const int led_pin = 5;
 static uint32_t led_delay = 500;
 
 // Globals
@@ -60,9 +60,9 @@ void readSerial(void *parameters) {
         Serial.print("Updated LED delay to: ");    
         Serial.println(led_delay); 
         vTaskDelay(100 / portTICK_PERIOD_MS);
-        preferences.begin("myapp", false);
-        preferences.putUInt("val",led_delay); 
-        preferences.end();        
+        // preferences.begin("myapp", false);
+        // preferences.putUInt("val",led_delay); 
+        // preferences.end();        
         vTaskDelay(100 / portTICK_PERIOD_MS);
         memset(buf, 0, buf_len);
         idx = 0;
